@@ -1,0 +1,71 @@
+{
+  "name": "csg-dsc-04a-arcade-demo",
+  "version": "1.0.0-demo",
+  "description": "BLOODRUN ARCADE (DEMO) — CSG-DSC-04A · Evaluation Slice · Unindexed Recovered Executable Remnant",
+  "main": "main.js",
+  "volta": {
+    "node": "20.20.0",
+    "npm": "11.10.1"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "watch": "node build.js --watch",
+    "deploy": "node deploy.js",
+    "start": "npm run build && electron .",
+    "dev": "npm run build && electron .",
+    "dev:gpu-off": "npm run build && cross-env BR_DISABLE_GPU=1 electron .",
+    "clean": "rm -rf dist/ out/ release/ test-results/",
+    "test": "npm run build && playwright test --config=playwright.config.mjs",
+    "test:ui": "npm run build && playwright test --config=playwright.config.mjs --ui",
+    "test:headed": "npm run build && playwright test --config=playwright.config.mjs --headed",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:mac-dir": "npm run build && electron-builder --mac dir",
+    "dist:mac-universal": "npm run build && electron-builder --mac --universal"
+  },
+  "build": {
+    "appId": "com.catalystsystemsgroup.bloodrun.demo",
+    "productName": "BLOODRUN DEMO",
+    "asar": false,
+    "npmRebuild": false,
+    "directories": { "output": "release" },
+    "files": [
+      "main.js",
+      "BLOODRUN.exe.html",
+      "arcade.page.css",
+      "dist/arcade.bundle.js",
+      "assets/**/*",
+      "audio/**/*",
+      "fonts/**/*",
+      "build/icon.icns",
+      "build/icon-256.png",
+      "!**/*.map",
+      "!**/.DS_Store"
+    ],
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.games",
+      "identity": "0CCBC44B416CE31FA99603068AF94534E3A55C4C",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "target": ["dir", "zip", "dmg"]
+    },
+    "dmg": { "title": "BLOODRUN DEMO" }
+  },
+  "keywords": [],
+  "author": "Catalyst Systems Group",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {},
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "cross-env": "^7.0.3",
+    "electron": "^32.0.0",
+    "electron-builder": "^26.15.3",
+    "esbuild": "^0.24.0",
+    "playwright": "^1.60.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

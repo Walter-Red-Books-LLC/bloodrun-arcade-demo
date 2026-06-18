@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<!--
+  BLOODRUN ARCADE — CSG-DSC-04A
+  Artifact ID    : CSG-DSC-04A
+  Status         : Unindexed / Recovered Executable Remnant
+  Authority      : Catalyst Systems Group wrapper only
+  Route Class    : Optional recovered branch (Holmn annex)
+  Progression    : NONE — state isolated to wr_holmn_arcade_* keys only
+
+  Placement      : public/holmn/mount/bloodrun-arcade/index.html
+                   public/holmn/mount/recovered/bloodrun-arcade/index.html
+
+  CSP NOTE       : This page requires CSP_SHELL (style-src-attr unsafe-inline)
+                   due to Win95 desktop chrome. In bloodrun.exe main.js:
+
+                     const isShellPage = rel === "vm/index.html"
+                                      || rel === "recovery-node.html"
+                                      || rel === "arcade/index.html";
+
+                   Game world (screens-game.jsx) is fully canvas-based —
+                   zero inline styles in active render paths.
+-->
+<meta name="page-key" content="csg-dsc-04a-arcade" />
+<title>BLOODRUN.exe — CSG-DSC-04A</title>
+<link rel="stylesheet" href="arcade.page.css" />
+</head>
+<body>
+<div id="root"></div>
+<script src="arcade.bundle.js"></script>
+</body>
+</html>

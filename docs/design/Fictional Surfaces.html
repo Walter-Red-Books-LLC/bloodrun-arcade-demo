@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BLOODRUN.exe — Fictional Surfaces</title>
+<link rel="stylesheet" href="bloodrun.css" />
+<link rel="stylesheet" href="surfaces.css" />
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#0a0606"/>
+  <rect x="14" y="20" width="72" height="50" fill="#c0c0c0" stroke="#000" stroke-width="1.5"/>
+  <rect x="14" y="20" width="72" height="6" fill="#000080"/>
+  <rect x="20" y="32" width="60" height="32" fill="#000"/>
+  <text x="50" y="50" font-family="monospace" font-size="9" font-weight="700" text-anchor="middle" fill="#E62028" letter-spacing="1">BLOOD</text>
+  <text x="50" y="60" font-family="monospace" font-size="9" font-weight="700" text-anchor="middle" fill="#E62028" letter-spacing="1">RUN</text>
+  <polygon points="50,76 64,90 36,90" fill="none" stroke="#F5A524" stroke-width="1.5"/>
+</svg>
+</template>
+<style>
+  /* The design canvas hosts dark / pixel-style artboards. Counter
+     the canvas's antialiasing for crisp Win95 rendering. */
+  .pixel-render, .pixel-render * {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="surfaces-shared.jsx"></script>
+<script type="text/babel" src="surfaces-installer.jsx"></script>
+<script type="text/babel" src="surfaces-system.jsx"></script>
+<script type="text/babel" src="surfaces-paper.jsx"></script>
+<script type="text/babel" src="surfaces-void.jsx"></script>
+<script type="text/babel" src="surfaces-desktop.jsx"></script>
+
+<script type="text/babel">
+const {
+  DesignCanvas, DCSection, DCArtboard,
+  InstallerWizard, EULAWindow, UninstallFailedDialog,
+  SystemPropertiesCompat,
+  PrintedNotice, VoidSplash, MockDesktop,
+} = window;
+
+function App() {
+  return (
+    <DesignCanvas
+      title="BLOODRUN.exe — Fictional Surfaces"
+      subtitle="In-world chrome around the artifact: setup, license, desktop, archival paper, VOID variant."
+    >
+      <DCSection id="install" title="Installation Surfaces" subtitle="What it looks like to put BLOODRUN.exe on a machine.">
+        <DCArtboard id="installer" label="01 · Setup Wizard / Welcome" width={640} height={440}>
+          <InstallerWizard/>
+        </DCArtboard>
+        <DCArtboard id="eula" label="02 · CSG-LIC-04 EULA" width={640} height={520}>
+          <EULAWindow/>
+        </DCArtboard>
+        <DCArtboard id="uninstall" label="03 · Uninstall Failed" width={440} height={220}>
+          <UninstallFailedDialog/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="os" title="Operating-System Surfaces" subtitle="How Windows itself sees the artifact.">
+        <DCArtboard id="compat" label="04 · Properties → Compatibility" width={460} height={580}>
+          <SystemPropertiesCompat/>
+        </DCArtboard>
+        <DCArtboard id="desktop" label="05 · Behind the glass — BLOODRUN on a Win95 desktop" width={1200} height={800}>
+          <MockDesktop/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="paper" title="Physical Materials" subtitle="What shipped with the floppy.">
+        <DCArtboard id="notice" label="06 · CSG-DSC-04A printed insert" width={580} height={800}>
+          <PrintedNotice/>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="afterlife" title="Afterlife" subtitle="The artifact, withdrawn.">
+        <DCArtboard id="void" label="07 · VOID / DECOMMISSIONED splash" width={1280} height={720}>
+          <VoidSplash/>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
