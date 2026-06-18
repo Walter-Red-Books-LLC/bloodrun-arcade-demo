@@ -75,6 +75,13 @@ masters are kept locally by the owner.
   (`spctl -t install` on a dmg reports "no usable signature" — that's the wrong probe for a dmg, not a defect.)
 - To re-notarize after changes: `APPLE_KEYCHAIN_PROFILE=bloodrun-notary npm run dist:mac-universal`.
 
+**Windows:** `npm run dist:win` → `release/`: a **portable** `BLOODRUN DEMO 1.0.0-demo.exe`
+(no install — double-click to run) and an **NSIS installer** `BLOODRUN DEMO Setup 1.0.0-demo.exe`.
+x64, icon from `build/icon.ico` (generated from `assets/demo-icon.png` via ImageMagick).
+Cross-built from macOS — electron-builder v26 embeds the PE icon natively (no Wine needed).
+**Unsigned** (no Windows code-signing cert) → SmartScreen "Windows protected your PC" on first
+run → More info → Run anyway. Not launch-tested on macOS; smoke-test on real Windows before wide release.
+
 ### App icon
 Built from `assets/demo-icon.png` (500×500). `build/icon.icns` (mac iconset) + `build/icon-256.png`.
 Wired as `BrowserWindow.icon` and `app.dock.setIcon` (`main.js`) and as the page favicon

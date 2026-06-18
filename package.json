@@ -20,7 +20,8 @@
     "test:headed": "npm run build && playwright test --config=playwright.config.mjs --headed",
     "dist:mac": "npm run build && electron-builder --mac",
     "dist:mac-dir": "npm run build && electron-builder --mac dir",
-    "dist:mac-universal": "npm run build && electron-builder --mac --universal"
+    "dist:mac-universal": "npm run build && electron-builder --mac --universal",
+    "dist:win": "npm run build && electron-builder --win"
   },
   "build": {
     "appId": "com.catalystsystemsgroup.bloodrun.demo",
@@ -51,7 +52,11 @@
       "entitlementsInherit": "build/entitlements.mac.plist",
       "target": ["dir", "zip", "dmg"]
     },
-    "dmg": { "title": "BLOODRUN DEMO" }
+    "dmg": { "title": "BLOODRUN DEMO" },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": ["portable", "nsis"]
+    }
   },
   "keywords": [],
   "author": "Catalyst Systems Group",
