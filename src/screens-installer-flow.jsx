@@ -101,7 +101,7 @@ function Steps({ step }) {
 // === WELCOME ===============================================================
 function WelcomeStep({ onNext, onCancel }) {
   return (
-    <WizardFrame title="BLOODRUN — InstallShield Wizard" onCancelClick={onCancel} footer={
+    <WizardFrame title="BLOODRUN — CSG Setup" onCancelClick={onCancel} footer={
       <>
         <div className="w95-btn disabled">&lt; Back</div>
         <div className="w95-btn default" onClick={onNext}><u>N</u>ext &gt;</div>
@@ -219,7 +219,7 @@ function LicenseStep({ onNext, onBack, onCancel }) {
   }, [accepted]);
 
   return (
-    <WizardFrame title="BLOODRUN — InstallShield Wizard" onCancelClick={onCancel} footer={
+    <WizardFrame title="BLOODRUN — CSG Setup" onCancelClick={onCancel} footer={
       <>
         <div className="w95-btn" onClick={onBack}>&lt; Back</div>
         <div className={`w95-btn ${accepted ? 'default' : 'disabled'}`} onClick={() => accepted && onNext()}>
@@ -297,7 +297,7 @@ function LicenseStep({ onNext, onBack, onCancel }) {
 // === DESTINATION ============================================================
 function DestStep({ onNext, onBack, onCancel }) {
   return (
-    <WizardFrame title="BLOODRUN — InstallShield Wizard" onCancelClick={onCancel} footer={
+    <WizardFrame title="BLOODRUN — CSG Setup" onCancelClick={onCancel} footer={
       <>
         <div className="w95-btn" onClick={onBack}>&lt; Back</div>
         <div className="w95-btn default" onClick={onNext}><u>I</u>nstall</div>
@@ -398,7 +398,7 @@ function ProgressStep({ onDone, onCancel, durationMs = 6000 }) {
   const isSeal = phase === 'seal' || phase === 'done';
 
   return (
-    <WizardFrame title="BLOODRUN — InstallShield Wizard" onCancelClick={onCancel} footer={
+    <WizardFrame title="BLOODRUN — CSG Setup" onCancelClick={onCancel} footer={
       <>
         <div className="w95-btn disabled">&lt; Back</div>
         <div className="w95-btn disabled"><u>N</u>ext &gt;</div>
@@ -467,7 +467,7 @@ function ProgressStep({ onDone, onCancel, durationMs = 6000 }) {
 // === FINISH =================================================================
 function FinishStep({ onLaunch, onCancel }) {
   return (
-    <WizardFrame title="BLOODRUN — InstallShield Wizard" onCancelClick={onCancel} footer={
+    <WizardFrame title="BLOODRUN — CSG Setup" onCancelClick={onCancel} footer={
       <>
         <div className="w95-btn disabled">&lt; Back</div>
         <div className="w95-btn default" onClick={() => onLaunch(false)}><u>F</u>inish</div>
@@ -476,7 +476,7 @@ function FinishStep({ onLaunch, onCancel }) {
     }>
       <StepBanner subtitle="SETUP COMPLETE"/>
       <div style={{ flex: 1, padding: '20px 22px 10px', display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
-        <div style={{ fontSize: 14, fontWeight: 700 }}>InstallShield Wizard Complete</div>
+        <div style={{ fontSize: 14, fontWeight: 700 }}>CSG Setup Complete</div>
         <div style={{ fontSize: 11, lineHeight: 1.5 }}>
           BLOODRUN.exe has been installed on your computer and sealed under reference&nbsp;<b>CSG-DSC-04A</b> · seal&nbsp;<b>▲-04-A-0117</b>. Click&nbsp;<b>Finish</b> to complete Setup.
         </div>

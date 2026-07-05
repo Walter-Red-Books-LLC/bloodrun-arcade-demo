@@ -387,7 +387,7 @@ function StartMenu({ onClose, onLaunch, onShutdown, onOpenReadme, onOpenMyComput
       }}>
         <span style={{ color: '#fff', fontSize: 11, fontWeight: 700, writingMode: 'vertical-rl',
                        transform: 'rotate(180deg)', letterSpacing: '0.1em', paddingLeft: 4 }}>
-          Windows 95
+          RUNTIME 95
         </span>
       </div>
 
@@ -868,7 +868,7 @@ function useAudioDeck(tracks, { withAnalyser = false } = {}) {
   return { idx, playing, cur, dur, vol, toggle, select, next, prev, seek, setVol, analyserRef };
 }
 
-// Winamp-style spectrum: green bars with falling red peak caps, on black.
+// Classic spectrum visualizer: green bars with falling red peak caps, on black.
 function SpectrumViz({ analyserRef, playing }) {
   const canvasRef = useRef(null);
   const peaksRef  = useRef(null);
@@ -1296,7 +1296,7 @@ function DesktopLaunch({ onLaunch, onNoticeOpen, onUninstallTriggered, onShutdow
     { t: 1820, text: '  Artifact checksum: CSG-DSC-04A [OK]',             col: 'green' },
     { t: 1980, text: '  Envelope: CSG-LIC-04 § 3.1 — NON-REMOVABLE',     col: 'red'   },
     { t: 2150, text: '',                                                    col: 'grey'  },
-    { t: 2260, text: 'Starting Windows 95…',                               col: 'grey'  },
+    { t: 2260, text: 'Starting RUNTIME 95…',                               col: 'grey'  },
   ];
   const BIOS_COL = { grey: '#b0b0b0', amber: '#F5A524', green: '#6BCC4D', red: '#E62028' };
 
@@ -1568,7 +1568,7 @@ function DesktopLaunch({ onLaunch, onNoticeOpen, onUninstallTriggered, onShutdow
                 <div>
                   <div style={{ fontFamily: '"Times New Roman", Times, serif', color: '#fff',
                                 fontSize: 32, fontWeight: 400, letterSpacing: '0.04em', lineHeight: 1 }}>
-                    Windows<span style={{ fontStyle: 'italic' }}>95</span>
+                    RUNTIME<span style={{ fontStyle: 'italic' }}>95</span>
                   </div>
                   <div style={{ fontFamily: 'IBM Plex Mono, monospace', color: '#F5A524',
                                 fontSize: 10, letterSpacing: '0.2em', marginTop: 6 }}>
@@ -1623,7 +1623,7 @@ function DesktopLaunch({ onLaunch, onNoticeOpen, onUninstallTriggered, onShutdow
           </svg>
           <div style={{ position: 'absolute', left: 18, top: 18, background: '#ffffcc',
                         border: '1px solid #000', padding: '2px 6px',
-                        fontFamily: '"MS Sans Serif", Tahoma, sans-serif', fontSize: 11,
+                        fontFamily: 'Tahoma, Geneva, sans-serif', fontSize: 11,
                         whiteSpace: 'nowrap' }}>
             Double-click to run
           </div>

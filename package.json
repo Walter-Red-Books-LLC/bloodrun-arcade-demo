@@ -1,6 +1,6 @@
 {
   "name": "csg-dsc-04a-arcade-demo",
-  "version": "1.0.0-demo",
+  "version": "1.0.1-demo",
   "description": "BLOODRUN ARCADE (DEMO) — CSG-DSC-04A · Evaluation Slice · Unindexed Recovered Executable Remnant",
   "main": "main.js",
   "volta": {

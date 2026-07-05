@@ -340,11 +340,11 @@ function UninstallFailedModal({ onDismiss, reason = 'exit' }) {
                   `File delete result: DENIED — envelope seal active (▲-04-A-0117)`,
                   `Contacting CSG distribution node at 192.168.▲.∞…`,
                   `Network response: CONNECTION_REFUSED — node decommissioned 2003.04.17`,
-                  `Writing removal request to C:\\WINDOWS\\TEMP\\csg_removal_req.tmp…`,
+                  `Writing removal request to C:\\CSG\\TEMP\\csg_removal_req.tmp…`,
                   `Write result: DENIED — file marked SYSTEM + HIDDEN + SEALED`,
                   `Error 0x80004005 — UninstallKey withheld by publisher at time of setup.`,
                   `See CSG-LIC-04 § 5.1: removal is explicitly prohibited.`,
-                  `This error has been logged to C:\\WINDOWS\\csg_diagnostic.log.`,
+                  `This error has been logged to C:\\CSG\\csg_diagnostic.log.`,
                 ].map((line, i) => (
                   <div key={i} style={{ color: line.includes('DENIED') || line.includes('ERROR') || line.includes('refused') ? '#a8281c' : '#000' }}>
                     {line}

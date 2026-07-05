@@ -188,7 +188,7 @@ const EULA_SECTIONS = [
   ['3. Restrictions',
     'You may not: copy, reproduce, distribute, sell, sublicense, lease, or commercially exploit the Software; reverse engineer, decompile, or disassemble it except where such restriction is prohibited by law; remove, alter, or obscure any notices, labels, or attribution marks; or use the Software in any manner that violates applicable law or infringes the rights of any party.'],
   ['4. Fictional / Simulated Work',
-    'The Software is a fictional, simulated interactive artwork. All content is presented for artistic and narrative effect and does not represent real-world systems, entities, events, organizations, or procedures. It is not a diagnostic, medical, legal, therapeutic, or evaluative tool and must not be relied upon for any such purpose.'],
+    'The Software is a fictional, simulated interactive artwork. All content is presented for artistic and narrative effect and does not represent real-world systems, entities, events, organizations, or procedures. It is not a diagnostic, medical, legal, therapeutic, or evaluative tool and must not be relied upon for any such purpose. The Software is not affiliated with, endorsed by, sponsored by, or connected to Microsoft Corporation or any other company; all trademarks are the property of their respective owners.'],
   ['5. Content Advisory',
     'The Software contains flashing imagery, simulated CRT flicker, strobing effects, sudden audio, and themes of simulated horror. Discontinue use if you experience discomfort. If you have a photosensitive condition, exercise caution before use.'],
   ['6. No Data Collection / Privacy',
