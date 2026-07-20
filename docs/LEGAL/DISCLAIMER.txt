@@ -1,0 +1,14 @@
+Source Bundle License
+Walter Red Books LLC
+
+The distributed source bundle is provided for archival transparency only.
+	1.	No Redistribution
+Source archives may not be redistributed in whole or part.
+	2.	No Forking
+Forking, modification, or derivative redistribution is prohibited.
+	3.	No Commercial Exploitation
+Source code and structure may not be used as a base framework for commercial or non-commercial derivative projects.
+	4.	Media Exclusion Notice
+Certain media assets may be excluded from source bundles intentionally. This does not grant rights to independently obtain or reconstruct missing assets.
+	5.	Structural Architecture
+The system architecture, execution flow, and module logic are protected literary-software constructs and may not be replicated.

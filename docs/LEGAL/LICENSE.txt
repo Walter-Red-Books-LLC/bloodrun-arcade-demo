@@ -1,0 +1,24 @@
+Walter Red Books LLC
+Proprietary Software License
+© 2026 Walter Red Books LLC. All Rights Reserved.
+
+This software and all associated components, including but not limited to executable code, source code, compiled binaries, audiovisual media, narrative systems, interaction logic, structural architecture, design elements, documentation, and packaging (collectively, the “Software”) are the exclusive intellectual property of Walter Red Books LLC.
+	1.	License Grant
+Walter Red Books LLC grants a limited, non-exclusive, non-transferable, revocable license to use the Software for personal use only unless expressly authorized in writing.
+	2.	Ownership
+The Software is licensed, not sold. All rights, title, and interest remain solely with Walter Red Books LLC.
+	3.	Restrictions
+You may not:
+
+• Reverse engineer, decompile, disassemble, or attempt to derive source code
+• Modify, adapt, or create derivative works
+• Extract media or narrative assets
+• Redistribute, mirror, torrent, or rehost the Software
+• Use the Software for commercial exploitation
+• Circumvent technological protection measures
+	4.	Anti-Circumvention
+Any attempt to bypass integrity mechanisms, packaging constraints, execution gating, or system state controls constitutes a license violation.
+	5.	Termination
+This license terminates automatically upon breach.
+	6.	Reservation of Rights
+All rights not expressly granted are reserved.

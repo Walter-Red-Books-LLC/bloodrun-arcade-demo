@@ -1,0 +1,1 @@
+See */docs/LEGAL/LICENSE.txt for full license terms.

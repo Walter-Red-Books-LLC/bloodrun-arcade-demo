@@ -1,0 +1,10 @@
+Privacy Policy
+Walter Red Books LLC
+
+Bloodrun.exe does not collect or transmit personal information.
+
+The Software stores limited local interaction state using system storage mechanisms to preserve narrative continuity.
+
+No telemetry, analytics, advertising frameworks, or third-party tracking systems are included.
+
+Contact: walter@walterredbooks.com

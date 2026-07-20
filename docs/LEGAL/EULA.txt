@@ -1,0 +1,25 @@
+END USER LICENSE AGREEMENT
+Walter Red Books LLC
+Effective 2026
+
+By installing or using this Software, you agree to the terms below.
+	1.	License
+A limited, revocable, non-exclusive license is granted for personal use.
+	2.	No Transfer
+You may not sell, sublicense, rent, lease, lend, or distribute the Software.
+	3.	Intellectual Property
+All content, system architecture, and interaction frameworks are protected under U.S. and international copyright law.
+	4.	Local Storage
+The Software stores limited interaction data locally to maintain continuity. No personal data is transmitted externally.
+	5.	No Warranty
+THE SOFTWARE IS PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND.
+	6.	Limitation of Liability
+To the maximum extent permitted by law, liability shall not exceed the amount paid for the Software.
+
+Walter Red Books LLC shall not be liable for indirect, incidental, consequential, or special damages.
+	7.	Arbitration
+All disputes shall be resolved via binding arbitration in Washington State.
+	8.	Governing Law
+Washington State law governs this Agreement.
+	9.	Severability
+If any provision is unenforceable, remaining provisions remain valid.

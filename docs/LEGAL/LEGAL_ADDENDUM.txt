@@ -1,0 +1,10 @@
+Architectural Protection Addendum
+Walter Red Books LLC
+	1.	Literary-Software Classification
+This Software is an authored interactive literary system.
+	2.	Structural Protection
+System sequencing, state mechanics, execution layering, and interaction architecture are protected creative constructs.
+	3.	Asset Protection
+Extraction or redistribution of audiovisual or narrative components is prohibited.
+	4.	Anti-Replication
+Recreating materially similar system architecture for distribution is prohibited.
