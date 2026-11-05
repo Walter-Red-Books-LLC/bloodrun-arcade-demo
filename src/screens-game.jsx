@@ -12,47 +12,6 @@ function getImg(src) {
   return IMG_CACHE.get(src);
 }
 
-// ── Boss color-key cache ──────────────────────────────────────────────────────
-// Boss PNGs have an opaque gray background (not alpha). We sample the four
-// corners, treat any pixel within THRESH of that color as background, and
-// store a background-removed offscreen canvas per frame. Built once per src.
-const BOSS_KEYED = new Map();
-function getBossKeyed(src) {
-  if (BOSS_KEYED.has(src)) return BOSS_KEYED.get(src) || null;
-  const img = getImg(src);
-  if (!img.complete || !img.naturalWidth) return null; // not loaded yet — try next frame
-
-  const nw = img.naturalWidth, nh = img.naturalHeight;
-  const off  = document.createElement('canvas');
-  off.width  = nw; off.height = nh;
-  const octx = off.getContext('2d', { willReadFrequently: true });
-  octx.drawImage(img, 0, 0);
-
-  const idata = octx.getImageData(0, 0, nw, nh);
-  const d     = idata.data;
-
-  // Sample all four corners to find the background color
-  const corners = [[0,0],[nw-1,0],[0,nh-1],[nw-1,nh-1]];
-  let bgR=0, bgG=0, bgB=0;
-  for (const [cx,cy] of corners) {
-    const i = (cy * nw + cx) * 4;
-    bgR += d[i]; bgG += d[i+1]; bgB += d[i+2];
-  }
-  bgR /= 4; bgG /= 4; bgB /= 4;
-
-  // Zero alpha on any pixel within THRESH of the background color
-  const THRESH = 28;
-  for (let i = 0; i < d.length; i += 4) {
-    if (Math.abs(d[i]-bgR) < THRESH && Math.abs(d[i+1]-bgG) < THRESH && Math.abs(d[i+2]-bgB) < THRESH) {
-      d[i+3] = 0;
-    }
-  }
-  octx.putImageData(idata, 0, 0);
-
-  BOSS_KEYED.set(src, off);
-  return off;
-}
-
 // Draw a PNG sprite so that pixel (anchorX, anchorY) in the source lands at (pivotX, pivotY).
 // dir < 0 mirrors horizontally around the pivot.
 function drawFootSprite(ctx, src, pivotX, pivotY, scale, dir, anchorX = 181, anchorY = 40, alpha = 1) {
@@ -77,16 +36,12 @@ const ZONE_BG_OUTER = { chapel: '#0a0204', sluice: '#020a06', vault: '#0a0602', 
 // ── Sheet-cell renderer ───────────────────────────────────────────────────────
 // Sprite sheets are 4 cols × 3 rows of FRAME_SZ×FRAME_SZ cells, same anchor
 // convention as individual frames (anchorX=181, anchorY=40).
-// getBossKeyed() strips the opaque background on the first call, then the keyed
-// canvas is used for all future cell draws — no background leaks into any cell.
 const FRAME_SZ  = 362;
 const SHEET_COLS = 4;
 
 function drawSheetCell(ctx, sheetSrc, col, row, pivotX, pivotY, scale, dir, filter) {
-  const keyed = getBossKeyed(sheetSrc);
-  const img   = keyed || getImg(sheetSrc);
-  if (!img) return;
-  if (!keyed && (!img.complete || !img.naturalWidth)) return;
+  const img = getImg(sheetSrc);
+  if (!img.complete || !img.naturalWidth) return;
   ctx.save();
   if (filter) ctx.filter = filter;
   if (dir < 0) { ctx.translate(pivotX * 2, 0); ctx.scale(-1, 1); }
@@ -282,15 +237,8 @@ function drawGameFrame(ctx, s, zone, groundCache, onPickup) {
         const bossIdx = Math.floor((now / (1000 / bossFps)) + en.id) % bossAnim.length;
         const bossSrc = bossAnim[bossIdx];
 
-        const BOSS_SCALE = 0.55;
-        const BOSS_ANCHOR_X = 181;
-        const BOSS_ANCHOR_Y = 340;
-        const bossDisplayH = BOSS_ANCHOR_Y * BOSS_SCALE; // height from feet to head anchor
-
-        // en.y = GROUND_Y (feet on the ground plane).
-        // drawFootSprite places pixel (BOSS_ANCHOR_X, BOSS_ANCHOR_Y) at (en.x, en.y),
-        // so the sprite top is at en.y - BOSS_ANCHOR_Y*BOSS_SCALE.
-        const bossBodyTop = en.y - BOSS_ANCHOR_Y * BOSS_SCALE; // visual/hitbox top
+        const bossScale = 0.55 * ENEMY_VISUAL_SCALE;
+        const footY = en.chargeActive ? 304 : bossAnim === bossSet.cast ? 296 : 324;
 
         // Ground shadow centred at feet
         ctx.save();
@@ -302,37 +250,10 @@ function drawGameFrame(ctx, s, zone, groundCache, onPickup) {
         ctx.fillRect(en.x - 90, en.y - 18, 180, 22);
         ctx.restore();
 
-        // Boss sprite — drawn with color-keyed canvas to remove opaque gray PNG background.
-        // getBossKeyed() samples corners on first call and zeroes background pixels.
-        // Falls back to raw drawFootSprite until the keyed canvas is ready.
-        {
-          const keyed = getBossKeyed(bossSrc);
-          ctx.save();
-          if (en.chargeActive) ctx.filter = 'brightness(1.6) sepia(1) saturate(12) hue-rotate(-5deg)';
-          if (en.dir < 0) { ctx.translate(en.x * 2, 0); ctx.scale(-1, 1); }
-          if (keyed) {
-            ctx.drawImage(
-              keyed,
-              en.x - BOSS_ANCHOR_X * BOSS_SCALE,
-              en.y - BOSS_ANCHOR_Y * BOSS_SCALE,
-              keyed.width  * BOSS_SCALE,
-              keyed.height * BOSS_SCALE,
-            );
-          } else {
-            // Not cached yet — draw raw (will fix on next frame)
-            const raw = getImg(bossSrc);
-            if (raw.complete && raw.naturalWidth) {
-              ctx.drawImage(
-                raw,
-                en.x - BOSS_ANCHOR_X * BOSS_SCALE,
-                en.y - BOSS_ANCHOR_Y * BOSS_SCALE,
-                raw.naturalWidth  * BOSS_SCALE,
-                raw.naturalHeight * BOSS_SCALE,
-              );
-            }
-          }
-          ctx.restore();
-        }
+        ctx.save();
+        if (en.chargeActive) ctx.filter = 'brightness(1.6) sepia(1) saturate(12) hue-rotate(-5deg)';
+        drawFootSprite(ctx, bossSrc, en.x, en.y, bossScale, en.dir, 181, footY);
+        ctx.restore();
 
         // Sanctum seal — once player enters the arena (past x=1400), lock them in
         if (s.zoneKey === 'sanctum' && s.bossArenaEntered) {
@@ -360,6 +281,15 @@ function drawGameFrame(ctx, s, zone, groundCache, onPickup) {
 
     const set = ENEMY_FRAMES[en.type]; if (!set) continue;
 
+    const { width, height } = ENEMY_BODY[en.type];
+    const pivotX = en.x + width / 2;
+    const flying = en.type === 'wraith' || en.type === 'butterfly';
+    const pivotY = en.y + (flying ? height / 2 : height);
+    ctx.save();
+    ctx.translate(pivotX, pivotY);
+    ctx.scale(ENEMY_VISUAL_SCALE, ENEMY_VISUAL_SCALE);
+    ctx.translate(-pivotX, -pivotY);
+
     const action = (en.state === 'chase' || en.state === 'charge' ||
                     en.type === 'wraith' || en.type === 'butterfly') ? 'walk' : 'idle';
 
@@ -373,20 +303,21 @@ function drawGameFrame(ctx, s, zone, groundCache, onPickup) {
       const sc   = en.type === 'beetle'     ? 0.26
                  : en.type === 'boss_aphid' ? 0.34
                  : 0.22;  // aphid + butterfly
-      const sheetEW = en.type === 'beetle' ? 55 : en.type === 'boss_aphid' ? 75 : en.type === 'aphid' ? 38 : 40;
-      const pivX = en.x + sheetEW / 2;
       const flt  = (en.type === 'boss_aphid' && en.chargeActive)
                    ? 'brightness(1.5) sepia(1) saturate(8)' : undefined;
-      drawSheetCell(ctx, set.sheet, col, row, pivX, en.y, sc, en.dir, flt);
+      // The queen's lowest idle pixel is at row 348 in the source cell.
+      const sheetY = en.type === 'boss_aphid' ? pivotY - (349 - 40) * sc : en.y;
+      drawSheetCell(ctx, set.sheet, col, row, pivotX, sheetY, sc, en.dir, flt);
     } else {
       // Individual-frame sprites (player, skullknife, hound, wraith, boss frames)
       const phase  = (now / 180 + en.id * 2) | 0;
       const frames = set[action] || set.idle;
       const src    = frames[phase % frames.length];
-      const sc     = en.type === 'hound' ? 0.20 : en.type === 'wraith' ? 0.26 : 0.30;
-      const ew     = en.type === 'hound' ? 70 : en.type === 'wraith' ? 56 : 40;
-      drawFootSprite(ctx, src, en.x + ew / 2, en.y, sc, en.dir);
+      const sc     = en.type === 'hound' ? 0.28 : en.type === 'wraith' ? 0.26 : 0.30;
+      const frameY = en.y + (en.type === 'hound' ? 6 : 0);
+      drawFootSprite(ctx, src, pivotX, frameY, sc, en.dir);
     }
+    ctx.restore();
   }
 
   // Player (PNG sprite)
@@ -406,7 +337,7 @@ function drawGameFrame(ctx, s, zone, groundCache, onPickup) {
   const walking = Math.abs(r.vx) > 0.1 && r.grounded;
   const bobY    = walking ? Math.sin(r.walkPhase * Math.PI / 2) * 2 : 0;
   const tiltDeg = walking ? Math.sin(r.walkPhase * Math.PI / 4) * 2 : 0;
-  const pvX = r.x + PLAYER_W / 2, pvY = r.y + bobY;
+  const pvX = r.x + PLAYER_W / 2, pvY = r.y + bobY + 6;
   const palpha = r.iframes > 0 ? (Math.floor(r.iframes / 80) % 2 === 0 ? 0.3 : 1) : 1;
   ctx.save();
   if (r.dead) {
@@ -547,6 +478,17 @@ const JUMP_VEL = -14;   // raised: platform 6 (GROUND_Y-150) needs ~150px, old -
 const PLAYER_W = 44;       // collision width
 const PLAYER_H = 100;      // collision height
 const SPRITE_SCALE = PLAYER_H / 298;
+const ENEMY_VISUAL_SCALE = 1.18;
+const ENEMY_BODY = {
+  skullknife: { width: 40, height: 64 },
+  hound:      { width: 70, height: 50 },
+  wraith:     { width: 56, height: 56 },
+  aphid:      { width: 38, height: 64 },
+  butterfly:  { width: 40, height: 50 },
+  beetle:     { width: 55, height: 80 },
+  boss_aphid: { width: 75, height: 100 },
+};
+
 const ATTACK_DUR = 320;
 const ATTACK_HIT_MS = [60, 200];
 const IFRAMES_MS = 800;
@@ -651,7 +593,7 @@ function makeEnemies(zone, loopCount = 0) {
     list.push({ id: 2, type: 'beetle',    x: rng(650,  60), y: GROUND_Y - 45, hp: 4 + extraHp, vx: 0, dir: -1, state: 'chase' });
     list.push({ id: 3, type: 'aphid',     x: rng(950,  60), y: GROUND_Y - 50, hp: 2 + extraHp, vx: 0.8 * spd, dir: 1, state: 'patrol' });
     list.push({ id: 4, type: 'beetle',    x: rng(1250, 60), y: GROUND_Y - 45, hp: 4 + extraHp, vx: 0, dir: -1, state: 'chase' });
-    list.push({ id: 5, type: 'boss_aphid',x: rng(1600, 40), y: GROUND_Y - 62, hp: 7 + extraHp, vx: 0, dir: -1, state: 'guard', chargeTimer: 2000, chargeActive: false, arenaSealed: false });
+    list.push({ id: 5, type: 'boss_aphid',x: rng(1600, 40), y: GROUND_Y - 100, hp: 7 + extraHp, vx: 0, dir: -1, state: 'guard', chargeTimer: 2000, chargeActive: false, arenaSealed: false });
     list.push({ id: 6, type: 'skullknife',x: rng(1950, 40), y: GROUND_Y - 70, hp: 2 + extraHp, vx: -0.6 * spd, dir: -1, state: 'patrol' });
     if (addExtra) {
       list.push({ id: 7, type: 'beetle',   x: rng(820, 60),  y: GROUND_Y - 45, hp: 4 + extraHp, vx: 0, dir: 1, state: 'chase' });
@@ -1113,25 +1055,9 @@ function Game({ zoneKey, onDeath, onZoneChange, noticeFound, onNoticeFound, onBo
       // Entity dimensions
       // boss: en.y = feet (GROUND_Y), body extends upward. All others: en.y = body top.
       const BOSS_BODY_H = 125; // shorter than full sprite — lets skilled players jump over
-      // Collision widths/heights — sheet sprites use 362×362 cells at their scale.
-      // boss_aphid at 0.36: sprite ~130px tall. beetle at 0.28: ~90px. aphid at 0.22: ~70px.
-      const ew   = en.type === 'boss'       ? 100
-                 : en.type === 'boss_aphid' ? 75
-                 : en.type === 'beetle'     ? 55
-                 : en.type === 'hound'      ? 70
-                 : en.type === 'wraith'     ? 56
-                 : en.type === 'aphid'      ? 38
-                 : en.type === 'butterfly'  ? 40
-                 : 40;
+      const body = en.type === 'boss' ? { width: 100, height: BOSS_BODY_H } : ENEMY_BODY[en.type];
+      const { width: ew, height: eh } = body;
       const etop = en.type === 'boss' ? en.y - BOSS_BODY_H : en.y;
-      const eh   = en.type === 'boss'       ? BOSS_BODY_H
-                 : en.type === 'boss_aphid' ? 100
-                 : en.type === 'beetle'     ? 80
-                 : en.type === 'hound'      ? 50
-                 : en.type === 'wraith'     ? 56
-                 : en.type === 'aphid'      ? 64
-                 : en.type === 'butterfly'  ? 50
-                 : 64;
 
       if (hitbox && en.hp > 0) {
         const ex = en.x;
