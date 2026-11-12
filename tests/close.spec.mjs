@@ -3,14 +3,6 @@
 import { test, expect } from '@playwright/test';
 import { desktopReady, launchApp, FLAGS } from './helpers.mjs';
 
-// Via Start → Shut Down (acked:true is fine here, no boot needed)
-async function openModalViaShutdown(page) {
-  await desktopReady(page);
-  await page.locator('.w95-start-btn').click();
-  await page.locator('text=Shut Down').first().click();
-  await page.waitForSelector('text=Add/Remove Programs', { timeout: 5000 });
-}
-
 // Via ESC on boot splash — must use acked:false so launch goes to boot
 async function openModalViaBoot(page) {
   await desktopReady(page, { acked: false });
@@ -21,9 +13,16 @@ async function openModalViaBoot(page) {
 }
 
 test.describe('uninstall modal — triggers', () => {
-  test('Start → Shut Down shows uninstall modal', async ({ page }) => {
-    await openModalViaShutdown(page);
-    await expect(page.locator('text=Add/Remove Programs').first()).toBeVisible();
+  test('Start → Shut Down requests app closure without the refusal modal', async ({ page }) => {
+    await desktopReady(page);
+    await page.evaluate(() => {
+      window.__closeRequested = false;
+      window.close = () => { window.__closeRequested = true; };
+    });
+    await page.locator('.w95-start-btn').click();
+    await page.getByText('Shut Down…', { exact: true }).click();
+    await expect.poll(() => page.evaluate(() => window.__closeRequested)).toBe(true);
+    await expect(page.getByText('Add/Remove Programs', { exact: true })).toHaveCount(0);
   });
 
   test('ESC on boot splash shows uninstall modal', async ({ page }) => {
@@ -34,12 +33,12 @@ test.describe('uninstall modal — triggers', () => {
 
 test.describe('uninstall modal — content', () => {
   test('shows error code 0x80004005', async ({ page }) => {
-    await openModalViaShutdown(page);
+    await openModalViaBoot(page);
     await expect(page.locator('text=0x80004005').first()).toBeVisible();
   });
 
   test('references CSG-DSC-04A seal', async ({ page }) => {
-    await openModalViaShutdown(page);
+    await openModalViaBoot(page);
     await expect(page.locator('text=CSG-DSC-04A').first()).toBeVisible();
   });
 
@@ -64,7 +63,7 @@ test.describe('uninstall modal — content', () => {
   }
 
   test('Details >> expands error log with registry entries', async ({ page }) => {
-    await openModalViaShutdown(page);
+    await openModalViaBoot(page);
     await clickDetailsBtn(page);
     await expect(page.locator('text=HKLM').first()).toBeVisible({ timeout: 5000 });
     await expect(page.locator('text=ERROR_ACCESS_DENIED').first()).toBeVisible();
@@ -72,7 +71,7 @@ test.describe('uninstall modal — content', () => {
   });
 
   test('Details >> toggles closed again', async ({ page }) => {
-    await openModalViaShutdown(page);
+    await openModalViaBoot(page);
     await clickDetailsBtn(page);
     await page.waitForSelector('text=HKLM', { timeout: 5000 });
     await clickDetailsBtn(page);

@@ -51,7 +51,7 @@ test.describe('installer — wizard navigation', () => {
     await page.waitForSelector('text=Choose Destination Location', { timeout: 5000 });
     await page.locator('.w95-btn.default').first().click();
     await page.waitForSelector('text=Installing BLOODRUN.exe', { timeout: 5000 });
-    await page.waitForSelector('text=InstallShield Wizard Complete', { timeout: 20000 });
+    await page.getByText('CSG Setup Complete', { exact: true }).waitFor({ timeout: 20000 });
     await expect(page.locator('.w95-btn.default').first()).toContainText('Finish');
   });
 
@@ -71,7 +71,7 @@ test.describe('installer — state persistence', () => {
     await page.locator('.w95-btn.default').first().click();
     await page.waitForSelector('text=Choose Destination Location');
     await page.locator('.w95-btn.default').first().click();
-    await page.waitForSelector('text=InstallShield Wizard Complete', { timeout: 20000 });
+    await page.getByText('CSG Setup Complete', { exact: true }).waitFor({ timeout: 20000 });
     await page.locator('.w95-btn.default').first().click();
 
     await page.waitForSelector('.w95-taskbar', { timeout: 10000 });
@@ -87,17 +87,15 @@ test.describe('installer — state persistence', () => {
     await page.locator('.w95-btn.default').first().click();
     await page.waitForSelector('text=Choose Destination Location');
     await page.locator('.w95-btn.default').first().click();
-    await page.waitForSelector('text=InstallShield Wizard Complete', { timeout: 20000 });
+    await page.getByText('CSG Setup Complete', { exact: true }).waitFor({ timeout: 20000 });
     await page.locator('.w95-btn.default').first().click();
 
     await page.waitForSelector('.w95-taskbar', { timeout: 10000 });
     await expect(page.locator('.boot-card')).not.toBeVisible();
   });
 
-  test('"Run BLOODRUN.exe now" auto-launches game sequence without any click', async ({ page }) => {
-    // Full install with the default "Run now" checkbox checked.
-    // After the desktop startup animation clears (~5.8s), the app fires doLaunch()
-    // automatically — the user never needs to touch anything.
+  test('Finish leaves the cabinet dormant until the operator launches it', async ({ page }) => {
+    // The demo requires a deliberate launch from the desktop after installation.
     await launchApp(page, { [FLAGS.installed]: false });
     await page.waitForSelector('.installer-step-body', { timeout: 8000 });
 
@@ -107,28 +105,20 @@ test.describe('installer — state persistence', () => {
     await page.locator('.w95-btn.default').first().click();          // License → Next
     await page.waitForSelector('text=Choose Destination Location');
     await page.locator('.w95-btn.default').first().click();          // Dest → Install
-    await page.waitForSelector('text=InstallShield Wizard Complete', { timeout: 20000 });
+    await page.getByText('CSG Setup Complete', { exact: true }).waitFor({ timeout: 20000 });
 
-    // Verify "Run BLOODRUN.exe now" is checked by default on Finish screen
-    const runNowChecked = await page.evaluate(() => {
-      const label = [...document.querySelectorAll('label, span')].find(
-        el => el.textContent.includes('Run BLOODRUN.exe now')
-      );
-      const box = label?.querySelector?.('.w95-check-box') ?? label?.previousElementSibling;
-      return box?.classList.contains('checked') ?? false;
-    });
-    expect(runNowChecked).toBe(true);
+    await expect(page.getByText('Run BLOODRUN.exe now', { exact: true })).toHaveCount(0);
 
     await page.locator('.w95-btn.default').first().click();           // Finish
 
     // Desktop must appear first (mandatory gateway)
     await page.waitForSelector('.w95-taskbar', { timeout: 10000 });
 
-    // Without ANY user interaction the game sequence should auto-launch.
-    // The auto-launch fires after the startup animation (~5.8s post-desktop).
-    // We allow up to 12s total from desktop appearing to game sequence starting.
-    await expect(
-      page.locator('.boot-card, .csg-notice, .scene--title, .scene--game')
-    ).toBeVisible({ timeout: 12000 });
+    // Remain dormant past the former startup/auto-launch interval.
+    await page.waitForTimeout(7000);
+    await expect(page.locator('.boot-card, .csg-notice, .scene--game')).toHaveCount(0);
+    await expect(page.locator('.w95-taskbar')).toBeVisible();
+    await page.locator('.w95-desktop-icon', { hasText: 'BLOODRUN.exe' }).dblclick();
+    await expect(page.locator('.boot-card')).toBeVisible();
   });
 });

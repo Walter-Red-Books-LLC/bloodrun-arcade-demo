@@ -37,10 +37,11 @@ test.describe('game — zone loading', () => {
     expect(t2).not.toBe(t1);
   });
 
-  test('player starts with 3 hearts', async ({ page }) => {
+  test('starting mercy pickup raises health to four of five hearts', async ({ page }) => {
     await intoGame(page);
     await page.waitForTimeout(300);
-    expect(await getHeartCount(page)).toBe(3);
+    await expect(page.locator('.heart-row .heart')).toHaveCount(5);
+    expect(await getHeartCount(page)).toBe(4);
   });
 });
 
@@ -51,10 +52,12 @@ test.describe('game — zone switching', () => {
     await expect(page.locator('[data-zone="sluice"]')).toBeVisible({ timeout: 5000 });
   });
 
-  test('vault zone button switches zone', async ({ page }) => {
+  test('vault request reaches the demo warranty wall instead of the full zone', async ({ page }) => {
     await intoGame(page);
     await page.locator('.zone-btn--vault').first().click({ force: true });
-    await expect(page.locator('[data-zone="vault"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-demo="warranty-void"]')).toBeVisible();
+    await expect(page.locator('[data-zone="vault"]')).toHaveCount(0);
+    expect(await page.evaluate(() => localStorage.getItem('wr_holmn_arcade_demo_voided_v1'))).toBe('1');
   });
 
   test('zone switch resets run timer', async ({ page }) => {
