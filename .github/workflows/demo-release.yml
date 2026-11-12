@@ -9,7 +9,29 @@ concurrency:
   group: demo-release-${{ github.ref }}
   cancel-in-progress: false
 jobs:
+  release-status:
+    runs-on: ubuntu-latest
+    outputs:
+      build_allowed: ${{ steps.release.outputs.build_allowed }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: release
+        name: Preserve already published versions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" > "$RUNNER_TEMP/demo-releases.json"
+          node - <<'NODE'
+          const fs = require("fs");
+          const version = require("./package.json").version;
+          const releases = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/demo-releases.json", "utf8"));
+          const published = releases.some(release => release.tag_name === "v" + version && !release.draft);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, "build_allowed=" + !published + "\n");
+          console.log(published ? "Published version preserved; bump version before building again." : "Draft build allowed.");
+          NODE
   build:
+    needs: release-status
+    if: needs.release-status.outputs.build_allowed == 'true'
     strategy:
       fail-fast: false
       matrix:

@@ -1,46 +1,46 @@
-# Updater delivery checklist
+# Updater delivery checklist — 1.0.2-demo
 
-Prepared version: 1.0.2-demo. Main BLOODRUN 0.9.8 is separate.
+Verified November 11, 2026. This is the separate arcade evaluation demo; the main BLOODRUN archive and its 0.9.8 development version are separate.
 
-November 11 release status:
+## Release checks
 
-- [x] Implement updater, privacy disclosure, release statement and draft workflow.
-- [x] Verify local Apple profile and signing identity; resolve duplicate-name signing.
-- [x] Build signed universal Mac app, ZIP/DMG and update metadata; notarization accepted, app staple and Gatekeeper verified.
-- [x] Build unsigned Windows x64 Setup/portable and metadata; signing remains intentionally unconfigured.
-- [x] Pass four updater unit tests, build checks and isolated packaged launch smoke; record broad browser failures below.
-- [x] Push updater source commit `054e1014b1870f7922d721d71a53cc713e110be4` to the demo repository.
-- [x] Upload nine release assets and `SHA256SUMS.txt` to the unpublished `v1.0.2-demo` draft. All nine GitHub SHA-256 digests match local files. Asset names were normalized to the hyphens required by the feeds.
-- [ ] Resolve or explicitly accept the recorded browser acceptance gaps.
-- [ ] Exercise an actual installed-version update on Mac (download, Later, restart/install, offline startup and preserved settings).
-- [ ] Validate an installed Windows update on a Windows machine; currently unverified.
-- [ ] Configure hosted macOS Actions signing/notarization secrets for future CI builds; local Keychain access does not configure GitHub.
-- [ ] Publish the prerelease and its statement after release review. The draft is not publicly available to the updater.
+- [x] Updater, privacy disclosure, public update statement and draft-build workflow implemented.
+- [x] Four updater unit tests passed. Node 20.20.0 renderer build, syntax, workflow YAML and whitespace checks passed.
+- [x] Full Playwright acceptance suite: **80 passed**, no exclusions. Old tests were corrected to the current runtime: deliberate post-install launch, CSG completion heading, normal desktop shutdown, starting mercy pickup and the demo warranty wall. Runtime behavior was preserved.
+- [x] Universal Mac release signed with the configured Developer ID fingerprint. Apple accepted submission `b916ea88-0eec-4e66-8f00-6e10fea43b8f`; app signature, staple and Gatekeeper assessment passed.
+- [x] DMG installed into `/Applications/BLOODRUN DEMO.app`. The installed copy completed EULA/setup and remained responsive after the first updater interval using an isolated test profile.
+- [x] Real Mac updater replacement passed against the exact release ZIP: unavailable feed, download, Later, normal quit without installation, explicit restart/install, updated version, preserved local state and startup with updater networking disconnected. Signature and staple also passed after replacement.
+- [x] Exact uploaded Windows Setup installer passed SHA-512/size verification, silent NSIS installation, unavailable feed, download, Later, normal quit without installation, explicit restart/update, updated launch and state preservation on `windows-latest`.
+- [x] Hosted Apple signing configured with `CSC_LINK`, `CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, and `APPLE_TEAM_ID`. Hosted Mac build, notarization, staple and Gatekeeper checks passed on `macos-15`.
+- [x] Nine release assets plus `SHA256SUMS.txt` uploaded; asset names match the feeds. GitHub SHA-256 digests matched local files before publication.
+- [x] Temporary certificate export/password and download-only verification secrets removed; installed app retained. Windows verification keeps `contents: read` permissions.
+- [ ] Publish the reviewed prerelease/statement and confirm unauthenticated public feed access.
 
-Draft: https://github.com/Walter-Red-Books-LLC/bloodrun-arcade-demo/releases/tag/untagged-e3d50183e4d4ad58da4e
+Hosted evidence:
 
-Runtime: packaged macOS/Windows installed copies check after 15 seconds, then every 6 hours. Development, Linux and Windows portable copies skip it. Downloads are automatic; restart/install requires confirmation. Later offers again after 30 minutes. No automatic installation on quit, no downgrades, no client GitHub token. Provider is Walter-Red-Books-LLC/bloodrun-arcade-demo on the demo channel with prereleases allowed.
+- Mac signing/notarization: https://github.com/Walter-Red-Books-LLC/bloodrun-arcade-demo/actions/runs/43143789436/job/130936755645
+- Windows exact-installer verification: https://github.com/Walter-Red-Books-LLC/bloodrun-arcade-demo/actions/runs/43144354060/job/130938566536
 
-The new workflow triggers on matching v*-demo tags or manual dispatch. It uploads to a draft release; it does not automatically publish to users. Both OS builds must finish before manually publishing the draft as a prerelease. Never reuse a published version tag. Review the statement in update-statement-1.0.2-demo.md before publication.
+## Evidence boundaries
 
-Configure Actions secrets CSC_LINK, CSC_KEY_PASSWORD, APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD and APPLE_TEAM_ID. macOS deliberately fails without them. Existing signing identity is preserved. Windows signing is not configured by this change; assess signing and SmartScreen before release.
+The lower-version update fixtures contain the current updater with version `1.0.1-demo`; they are explicitly test fixtures, not the historical updater-free download. Mac uses the actual native Squirrel replacement and Windows uses the actual NSIS replacement. Automated tests inject the operator's Later/restart decision into the dialog API; they do not replace the downloader or installer. Test feeds, fixtures and profiles remain separate from the shipped app and normal user data.
 
-Keep all generated update artifacts: macOS DMG, signed ZIP, blockmap, demo-mac.yml; Windows NSIS Setup EXE, blockmap, demo.yml. Portable EXE is an optional manual download. A DMG alone is insufficient for the macOS updater. For local packaging without upload use --publish never explicitly.
+Windows remains unsigned by the operator's decision. Automated Windows install/update validation passed; physical Windows hardware and SmartScreen interaction were not manually tested. The portable executable does not auto-update. Existing historical 1.0.1-demo users still require a one-time manual installation of 1.0.2-demo.
 
-Before publishing, test an actual update between two installed signed versions on both OSes, including offline startup, Later, restart/install, preserved settings and clean startup afterward. Unit checks and npm run build do not establish end-to-end delivery. Existing v1.0.1-demo users need a one-time manual install of this updater-enabled release.
+## Runtime and future releases
 
-November 11 follow-up: the local configured Developer ID certificate is valid and the saved `bloodrun-notary` Keychain profile successfully queried Apple's submission history, including accepted November 5 builds. Use `APPLE_KEYCHAIN_PROFILE=bloodrun-notary` for local notarized packaging; credentials stay in Keychain. GitHub authentication works outside the sandbox. Repository-level Actions secrets remain absent, so hosted macOS builds still require separate secret setup. Windows remains unsigned by the operator's decision; a Windows OS license is separate from code signing. No live Windows update verification has been performed.
+Packaged Mac and installed Windows copies check after 15 seconds, then every six hours. Downloads are automatic. Installation requires explicit restart confirmation; Later offers again after 30 minutes. Normal quit never installs. Development, Linux and Windows portable copies skip updating. No client GitHub token, no downgrade permission.
 
-Local verification: four updater unit checks passed under Node 20.20.0, renderer build passed, package/lock/channel/workflow YAML checks passed. The demo browser suite initially could not launch because its expected browser was missing. After installing it, the first three audio checks stopped at the EULA rather than reaching the seeded desktop; the run stopped after three failures (77 tests not run). Those helpers need reconciliation with the current EULA flow before broad acceptance can be claimed. The updater is in the Electron main process and is not exercised by renderer-only browser tests.
+The public GitHub provider is `Walter-Red-Books-LLC/bloodrun-arcade-demo`, channel `demo`, with prereleases allowed. Preserve the app ID, certificate identity and state namespace across updates. Keep Mac ZIP/DMG/blockmaps/`demo-mac.yml` and Windows Setup/blockmap/`demo.yml`; DMG alone is insufficient for Mac delivery.
 
-Repository-level Actions secret listing returned no configured secrets. Organization/environment secrets were not assessed. Signed macOS unattended delivery is therefore not established.
+Tag-triggered and manual release builds upload drafts only. Published versions are preserved by a release-status gate: bump the version before building again. Publishing remains a reviewed step. `verify-demo-release.yml` can verify both platforms or retry one; before publication, temporary expiring asset URLs allow read-only Windows access to draft binaries, and are deleted after verification. Once published, normal read-only release downloads work.
 
-November 11 validation: updater unit tests passed (4/4), renderer builds and `git diff --check` passed. Browser helpers now accept the launch EULA using its visible button and respect POST/notice input delays. The full run reached 19 passing tests before five old desktop-shutdown/modal expectations stopped it (56 not run). A separate run excluding the ten uninstall-modal cases reached 64 passed, five failed and one not run: the old three-heart count, demo-restricted Vault, and three installer tests expecting the retired `InstallShield Wizard Complete` heading (the live snapshot shows `CSG Setup Complete`). These are recorded failures, not a green acceptance result. No gameplay/consent behavior was changed to satisfy tests.
+For local Mac packaging use `APPLE_KEYCHAIN_PROFILE=bloodrun-notary` and `--publish never`. Hosted builds use GitHub secrets. `build/sign-mac.cjs` retains the selected fingerprint because the builder's default signing path otherwise passes an ambiguous duplicate certificate name.
 
-Windows x64 Setup, portable EXE, blockmap and `demo.yml` were built locally with `--publish never`; Setup size and SHA-512 match the feed. No Windows-machine validation is claimed. macOS required `build/sign-mac.cjs` because electron-builder 26's default path discarded the selected fingerprint and passed an ambiguous duplicate certificate name; the hook retains the configured fingerprint. The universal app passed `codesign --verify --deep --strict`; Apple notarization was submitted as `b916ea88-0eec-4e66-8f00-6e10fea43b8f` and remains pending until explicitly checked below.
+## Files
 
-Native packaged smoke passed with version `1.0.2-demo`, `app.isPackaged=true`, and an isolated `/private/tmp/bloodrun-demo-release-smoke-1.0.2` profile: the EULA rendered and the app stayed responsive past its initial update-check timer. An initial harness teardown encountered the demo's close-resistance dialog; repeating with explicit test-process exit completed cleanly. This verifies packaged startup, not a successful update download or install.
+Public release: https://github.com/Walter-Red-Books-LLC/bloodrun-arcade-demo/releases/tag/v1.0.2-demo
 
-Apple subsequently **Accepted** submission `b916ea88-0eec-4e66-8f00-6e10fea43b8f`. The universal app's staple validates and Gatekeeper reports `accepted`, `source=Notarized Developer ID`. Signed universal ZIP/DMG packaging completed afterward. Hosted Mac signing secrets and a real installed-version update remain outstanding; do not equate notarization with end-to-end updater verification.
+Local Mac files: `release/BLOODRUN DEMO-1.0.2-demo-universal.dmg` and `release/BLOODRUN DEMO-1.0.2-demo-universal-mac.zip`.
 
-Unsigned local packaging smoke: the macOS ZIP-target app contained updater.cjs, electron-updater, app-update.yml with the expected public GitHub/demo configuration, and the privacy notice. The generated demo-mac.yml identified version 1.0.2-demo and the update ZIP. Signing/notarization were explicitly disabled only for this temporary smoke artifact. It is not proof of a successful installed update. The directory-only target did not emit updater metadata; use ZIP/DMG targets for update delivery. Temporary unsigned package/ZIP outputs were removed after verification to reclaim storage; they can be rebuilt.
+Local Windows files: `release/windows-1.0.2-demo/BLOODRUN DEMO Setup 1.0.2-demo.exe` and the portable `BLOODRUN DEMO 1.0.2-demo.exe`.

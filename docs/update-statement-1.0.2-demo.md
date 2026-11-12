@@ -8,7 +8,7 @@ After that, supported installed copies check shortly after launch and periodical
 
 On Windows, use the **Setup installer** for automatic updates. The portable executable remains a manual-download option. On macOS, install the application in Applications and run it from there. Source downloads and Git clones are still updated manually.
 
-The Windows build is unsigned, so Windows may show an unknown-publisher or SmartScreen warning. It has not been verified on a Windows machine for this release.
+The Windows build is unsigned, so Windows may show an unknown-publisher or SmartScreen warning.
 
 Separately, the main BLOODRUN development build has moved to **0.9.8**, with the tested Fractures work and Help Guides brought back into the main project, along with the recent arcade cleanup. That work is not all part of this demo update.
 

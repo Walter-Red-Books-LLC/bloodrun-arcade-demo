@@ -6,7 +6,7 @@
 **Diagnostic Distribution · CSG-DSC-04A**
 _Published by Quiet Mark Systems, Ltd. · Distributed by Catalyst Systems Group_
 
-`EVALUATION DEMO · v1.0.2-demo (release candidate)`
+`EVALUATION DEMO · v1.0.2-demo`
 
 </div>
 
@@ -45,9 +45,9 @@ discoverable rather than obvious.
 
 ## Run from source
 
-### Automatic updates (new release candidate)
+### Automatic updates
 
-The updater-enabled candidate checks for updates in packaged macOS and installed Windows builds. Downloads happen in the background; installation requires a restart confirmation. Windows portable builds and source checkouts remain manual updates. Users of v1.0.1-demo must install an updater-enabled release once before automatic delivery is possible. See [release setup and verification](docs/UPDATER-RELEASE.md). This source configuration does not mean the candidate has been published.
+Version 1.0.2-demo checks for updates in packaged macOS and installed Windows builds. Downloads happen in the background; installation requires a restart confirmation. Windows portable builds and source checkouts remain manual updates. Users of v1.0.1-demo must install this release once before automatic delivery is possible. See the [release downloads](https://github.com/Walter-Red-Books-LLC/bloodrun-arcade-demo/releases/tag/v1.0.2-demo) and [release verification record](docs/UPDATER-RELEASE.md).
 
 Requires **Node 20.20.0** / **npm 11.10.1** (Volta-pinned).
 
