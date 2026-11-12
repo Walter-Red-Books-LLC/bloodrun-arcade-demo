@@ -2,6 +2,23 @@
 
 Prepared version: 1.0.2-demo. Main BLOODRUN 0.9.8 is separate.
 
+November 11 release status:
+
+- [x] Implement updater, privacy disclosure, release statement and draft workflow.
+- [x] Verify local Apple profile and signing identity; resolve duplicate-name signing.
+- [x] Build signed universal Mac app, ZIP/DMG and update metadata; notarization accepted, app staple and Gatekeeper verified.
+- [x] Build unsigned Windows x64 Setup/portable and metadata; signing remains intentionally unconfigured.
+- [x] Pass four updater unit tests, build checks and isolated packaged launch smoke; record broad browser failures below.
+- [x] Push updater source commit `054e1014b1870f7922d721d71a53cc713e110be4` to the demo repository.
+- [x] Upload nine release assets and `SHA256SUMS.txt` to the unpublished `v1.0.2-demo` draft. All nine GitHub SHA-256 digests match local files. Asset names were normalized to the hyphens required by the feeds.
+- [ ] Resolve or explicitly accept the recorded browser acceptance gaps.
+- [ ] Exercise an actual installed-version update on Mac (download, Later, restart/install, offline startup and preserved settings).
+- [ ] Validate an installed Windows update on a Windows machine; currently unverified.
+- [ ] Configure hosted macOS Actions signing/notarization secrets for future CI builds; local Keychain access does not configure GitHub.
+- [ ] Publish the prerelease and its statement after release review. The draft is not publicly available to the updater.
+
+Draft: https://github.com/Walter-Red-Books-LLC/bloodrun-arcade-demo/releases/tag/untagged-e3d50183e4d4ad58da4e
+
 Runtime: packaged macOS/Windows installed copies check after 15 seconds, then every 6 hours. Development, Linux and Windows portable copies skip it. Downloads are automatic; restart/install requires confirmation. Later offers again after 30 minutes. No automatic installation on quit, no downgrades, no client GitHub token. Provider is Walter-Red-Books-LLC/bloodrun-arcade-demo on the demo channel with prereleases allowed.
 
 The new workflow triggers on matching v*-demo tags or manual dispatch. It uploads to a draft release; it does not automatically publish to users. Both OS builds must finish before manually publishing the draft as a prerelease. Never reuse a published version tag. Review the statement in update-statement-1.0.2-demo.md before publication.
