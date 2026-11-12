@@ -6,6 +6,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const http = require("node:http");
+const crypto = require("node:crypto");
 const { execFileSync } = require("node:child_process");
 const { _electron } = require("playwright");
 const yaml = require("js-yaml");
@@ -79,6 +80,11 @@ async function waitForVersion(expected) {
 }
 (async () => {
   assert.equal(process.platform, "win32");
+  assert.equal(manifest.version, version);
+  const installerBytes = fs.readFileSync(installer);
+  assert.equal(installerBytes.length, manifest.files[0].size);
+  assert.equal(crypto.createHash("sha512").update(installerBytes).digest("base64"), manifest.files[0].sha512);
+  console.log("PASS: downloaded draft installer matches release SHA-512 and size");
   fs.mkdirSync(root, { recursive: true });
   execFileSync(installer, ["/S", "/D=" + installDir], { timeout: 120000 });
   await waitForVersion(version);
