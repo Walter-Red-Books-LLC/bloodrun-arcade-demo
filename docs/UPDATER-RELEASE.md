@@ -14,12 +14,13 @@ Verified November 11, 2026. This is the separate arcade evaluation demo; the mai
 - [x] Hosted Apple signing configured with `CSC_LINK`, `CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, and `APPLE_TEAM_ID`. Hosted Mac build, notarization, staple and Gatekeeper checks passed on `macos-15`.
 - [x] Nine release assets plus `SHA256SUMS.txt` uploaded; asset names match the feeds. GitHub SHA-256 digests matched local files before publication.
 - [x] Temporary certificate export/password and download-only verification secrets removed; installed app retained. Windows verification keeps `contents: read` permissions.
-- [ ] Publish the reviewed prerelease/statement and confirm unauthenticated public feed access.
+- [x] Published the reviewed prerelease and update statement on November 11, 2026. Both public feeds/assets are accessible without authentication. The unmodified Applications copy reports current/feed version `1.0.2-demo`, channel `demo`, with no unnecessary download.
 
 Hosted evidence:
 
 - Mac signing/notarization: https://github.com/Walter-Red-Books-LLC/bloodrun-arcade-demo/actions/runs/43143789436/job/130936755645
 - Windows exact-installer verification: https://github.com/Walter-Red-Books-LLC/bloodrun-arcade-demo/actions/runs/43144354060/job/130938566536
+- Published-version preservation check: https://github.com/Walter-Red-Books-LLC/bloodrun-arcade-demo/actions/runs/43145140990
 
 ## Evidence boundaries
 
