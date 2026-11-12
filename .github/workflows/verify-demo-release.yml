@@ -1,10 +1,17 @@
 name: Verify demo release candidate
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: Platform to verify
+        type: choice
+        default: both
+        options: [both, mac, windows]
 permissions:
   contents: read
 jobs:
   mac-signing:
+    if: inputs.target != 'windows'
     runs-on: macos-15
     timeout-minutes: 45
     steps:
@@ -30,6 +37,7 @@ jobs:
           xcrun stapler validate "release/hosted-verification/mac-arm64/BLOODRUN DEMO.app"
           spctl --assess --type execute --verbose=2 "release/hosted-verification/mac-arm64/BLOODRUN DEMO.app"
   windows-install-update:
+    if: inputs.target != 'mac'
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
@@ -44,12 +52,21 @@ jobs:
       - name: Download the exact unpublished release candidate
         env:
           GH_TOKEN: ${{ github.token }}
+          DEMO_VERIFY_INSTALLER_URL: ${{ secrets.DEMO_VERIFY_INSTALLER_URL }}
+          DEMO_VERIFY_MANIFEST_URL: ${{ secrets.DEMO_VERIFY_MANIFEST_URL }}
         shell: pwsh
         run: |
           $demoVersion = node -p 'require("./package.json").version'
           New-Item -ItemType Directory -Force release/windows-verification | Out-Null
-          gh release download "v$demoVersion" --repo "$env:GITHUB_REPOSITORY" --pattern "BLOODRUN-DEMO-Setup-$demoVersion.exe" --pattern demo.yml --dir release/windows-verification
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          Move-Item "release/windows-verification/BLOODRUN-DEMO-Setup-$demoVersion.exe" "release/windows-verification/BLOODRUN DEMO Setup $demoVersion.exe"
+          if ($env:DEMO_VERIFY_INSTALLER_URL -and $env:DEMO_VERIFY_MANIFEST_URL) {
+            # Expiring, download-only access to these two draft assets. The
+            # verification token retains contents: read and cannot publish.
+            Invoke-WebRequest -Uri $env:DEMO_VERIFY_INSTALLER_URL -OutFile "release/windows-verification/BLOODRUN DEMO Setup $demoVersion.exe"
+            Invoke-WebRequest -Uri $env:DEMO_VERIFY_MANIFEST_URL -OutFile release/windows-verification/demo.yml
+          } else {
+            gh release download "v$demoVersion" --repo "$env:GITHUB_REPOSITORY" --pattern "BLOODRUN-DEMO-Setup-$demoVersion.exe" --pattern demo.yml --dir release/windows-verification
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            Move-Item "release/windows-verification/BLOODRUN-DEMO-Setup-$demoVersion.exe" "release/windows-verification/BLOODRUN DEMO Setup $demoVersion.exe"
+          }
       - name: Verify Windows install, download, Later, restart and state preservation
         run: node tests/windows-installed-updater.cjs
