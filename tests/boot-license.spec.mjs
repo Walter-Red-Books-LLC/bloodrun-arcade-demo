@@ -8,12 +8,16 @@ async function toBootScreen(page) {
   await desktopReady(page, { acked: false });
   await page.locator('.w95-desktop-icon', { hasText: 'BLOODRUN.exe' }).dblclick();
   await page.waitForSelector('.boot-card', { timeout: 10000 });
+  // Input is intentionally dormant during POST; wait for the operator prompt.
+  await expect(page.locator('.boot-card .row').filter({ hasText: 'PRESS [ENTER] TO ACKNOWLEDGE' })).toBeVisible({ timeout: 8000 });
 }
 
 async function toLicense(page) {
   await toBootScreen(page);
   await page.keyboard.press('Enter');
   await page.waitForSelector('.csg-notice', { timeout: 8000 });
+  // Keyboard acknowledgement has its own 1.5-second reading delay.
+  await page.waitForTimeout(1600);
 }
 
 test.describe('boot splash', () => {

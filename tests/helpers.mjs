@@ -17,6 +17,9 @@ export async function launchApp(page, flags = {}, queryString = '') {
   }, flags);
   await page.goto('/BLOODRUN.exe.html' + queryString);
   await page.waitForSelector('#root > *', { timeout: 10000 });
+  // Exercise the launch-time legal gate through its visible control.
+  const accept = page.getByRole('button', { name: 'ACCEPT', exact: true });
+  if (await accept.isVisible()) await accept.click();
 }
 
 // Wait for the desktop startup animation overlay to fully disappear.
@@ -37,6 +40,7 @@ export async function desktopReady(page, opts = {}) {
     [FLAGS.completed]: false,
   }, '?e2e=1');
   await page.waitForSelector('.w95-taskbar', { timeout: 12000 });
+  await waitForDesktop(page);
 }
 
 // Navigate to game screen as fast as possible via ?artifact=1.

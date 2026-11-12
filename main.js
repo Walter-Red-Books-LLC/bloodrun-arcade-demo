@@ -116,6 +116,17 @@ app.whenReady().then(() => {
   win.once('ready-to-show', () => win.show());
   // Load via app:// so all relative paths resolve through the handler above
   win.loadURL('app://arcade/BLOODRUN.exe.html');
+  if (app.isPackaged) {
+    try {
+      require('./updater.cjs').startUpdater({
+        app,
+        dialog: require('electron').dialog,
+        autoUpdater: require('electron-updater').autoUpdater,
+      });
+    } catch (error) {
+      console.warn('[updater] Initialization unavailable:', error.message);
+    }
+  }
 });
 
 app.on('window-all-closed', () => app.quit());

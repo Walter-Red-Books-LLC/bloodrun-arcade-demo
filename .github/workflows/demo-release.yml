@@ -1,0 +1,59 @@
+name: Build demo update draft
+on:
+  push:
+    tags: ["v*-demo"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: demo-release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.20.0
+          cache: npm
+      - name: Verify tag matches version
+        shell: bash
+        run: |
+          TAG="v$(node -p 'require("./package.json").version')"
+          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" != "$TAG" ]]; then exit 1; fi
+      - run: npm ci
+      - run: npm run test:updater
+      - run: npm run build
+      - name: Require macOS signing secrets
+        if: runner.os == 'macOS'
+        shell: bash
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          for name in CSC_LINK CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
+            if [ -z "${!name}" ]; then echo "Missing signing secret: $name" >&2; exit 1; fi
+          done
+      - name: Build signed universal macOS update draft
+        if: runner.os == 'macOS'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: npx electron-builder --mac --universal --publish always
+      - name: Build Windows update draft
+        if: runner.os == 'Windows'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npx electron-builder --win --publish always

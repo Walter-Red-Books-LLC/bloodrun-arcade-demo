@@ -1,7 +1,9 @@
 Privacy Policy
 Walter Red Books LLC
 
-Bloodrun.exe does not collect or transmit personal information.
+Bloodrun.exe does not include gameplay analytics or advertising tracking.
+
+Supported installed demo builds contact GitHub to check for and download software updates. These requests expose ordinary connection information, such as an IP address, to the hosting service. The updater does not submit the contents of your gameplay storage, narrative choices, or files. Development/source runs and Windows portable copies do not perform these automatic update checks.
 
 The Software stores limited local interaction state using system storage mechanisms to preserve narrative continuity.
 

@@ -192,7 +192,7 @@ const EULA_SECTIONS = [
   ['5. Content Advisory',
     'The Software contains flashing imagery, simulated CRT flicker, strobing effects, sudden audio, and themes of simulated horror. Discontinue use if you experience discomfort. If you have a photosensitive condition, exercise caution before use.'],
   ['6. No Data Collection / Privacy',
-    'The Software does not intentionally collect, request, or transmit personally identifiable information. Interactions may be stored locally on your device to support experience continuity (e.g., session flags, progress markers). You are responsible for safeguarding your device and environment.'],
+    'The Software does not intentionally collect or request personally identifiable information. Interactions may be stored locally on your device to support experience continuity (e.g., session flags, progress markers). Supported installed builds contact GitHub for software updates; those requests expose ordinary network connection information to the hosting service. Gameplay storage and narrative choices are not submitted by the updater. You are responsible for safeguarding your device and environment.'],
   ['7. Warranty Disclaimer',
     'TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE SOFTWARE IS PROVIDED “AS IS” AND “AS AVAILABLE,” WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR THAT THE SOFTWARE WILL BE ERROR-FREE OR UNINTERRUPTED.'],
   ['8. Limitation of Liability',

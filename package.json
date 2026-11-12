@@ -1,6 +1,6 @@
 {
   "name": "csg-dsc-04a-arcade-demo",
-  "version": "1.0.1-demo",
+  "version": "1.0.2-demo",
   "description": "BLOODRUN ARCADE (DEMO) — CSG-DSC-04A · Evaluation Slice · Unindexed Recovered Executable Remnant",
   "main": "main.js",
   "volta": {
@@ -21,16 +21,23 @@
     "dist:mac": "npm run build && electron-builder --mac",
     "dist:mac-dir": "npm run build && electron-builder --mac dir",
     "dist:mac-universal": "npm run build && electron-builder --mac --universal",
-    "dist:win": "npm run build && electron-builder --win"
+    "dist:win": "npm run build && electron-builder --win",
+    "test:updater": "node --test tests/updater.test.cjs"
   },
   "build": {
     "appId": "com.catalystsystemsgroup.bloodrun.demo",
     "productName": "BLOODRUN DEMO",
     "asar": false,
     "npmRebuild": false,
-    "directories": { "output": "release" },
+    "releaseInfo": { "releaseNotesFile": "docs/update-statement-1.0.2-demo.md" },
+    "publish": [{ "provider": "github", "owner": "Walter-Red-Books-LLC", "repo": "bloodrun-arcade-demo", "channel": "demo", "releaseType": "draft" }],
+    "directories": {
+      "output": "release"
+    },
     "files": [
       "main.js",
+      "updater.cjs",
+      "docs/LEGAL/PRIVACY.txt",
       "BLOODRUN.exe.html",
       "arcade.page.css",
       "dist/arcade.bundle.js",
@@ -46,23 +53,36 @@
       "icon": "build/icon.icns",
       "category": "public.app-category.games",
       "identity": "0CCBC44B416CE31FA99603068AF94534E3A55C4C",
+      "sign": "build/sign-mac.cjs",
       "hardenedRuntime": true,
+      "notarize": true,
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
-      "target": ["dir", "zip", "dmg"]
+      "target": [
+        "dir",
+        "zip",
+        "dmg"
+      ]
     },
-    "dmg": { "title": "BLOODRUN DEMO" },
+    "dmg": {
+      "title": "BLOODRUN DEMO"
+    },
     "win": {
       "icon": "build/icon.ico",
-      "target": ["portable", "nsis"]
+      "target": [
+        "portable",
+        "nsis"
+      ]
     }
   },
   "keywords": [],
   "author": "Catalyst Systems Group",
   "license": "ISC",
   "type": "commonjs",
-  "dependencies": {},
+  "dependencies": {
+    "electron-updater": "6.8.12"
+  },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
     "cross-env": "^7.0.3",
